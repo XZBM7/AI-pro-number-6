@@ -1,5 +1,4 @@
 import math
-
 class AIPlayer:
     def __init__(self, player_symbol):
         self.player_symbol = player_symbol
@@ -14,49 +13,18 @@ class AIPlayer:
                 for z in range(4):
                     if game.board[x][y][z] is None:
                         game.board[x][y][z] = self.player_symbol
-                        move_val = self.minimax(game, 1, False)
+                        move_val = self.heuristic(game, self.player_symbol) - self.heuristic(game, self.opponent_symbol)
                         game.board[x][y][z] = None
                         if move_val > best_val:
                             best_val = move_val
                             best_move = (x, y, z)
         return best_move
 
-    def minimax(self, game, depth, maximizing_player):
-        if game.is_winner(self.player_symbol):
-            return 1000
-        if game.is_winner(self.opponent_symbol):
-            return -1000
-        if game.is_full() or depth == 0:
-            return self.heuristic(game, self.player_symbol) - self.heuristic(game, self.opponent_symbol)
-
-        if maximizing_player:
-            max_eval = -math.inf
-            for x in range(4):
-                for y in range(4):
-                    for z in range(4):
-                        if game.board[x][y][z] is None:
-                            game.board[x][y][z] = self.player_symbol
-                            eval = self.minimax(game, depth - 1, False)
-                            game.board[x][y][z] = None
-                            max_eval = max(max_eval, eval)
-            return max_eval
-        else:
-            min_eval = math.inf
-            for x in range(4):
-                for y in range(4):
-                    for z in range(4):
-                        if game.board[x][y][z] is None:
-                            game.board[x][y][z] = self.opponent_symbol
-                            eval = self.minimax(game, depth - 1, True)
-                            game.board[x][y][z] = None
-                            min_eval = min(min_eval, eval)
-            return min_eval
-
     def heuristic(self, game, player):
         score = 0
 
         all_points = [(x, y, z) for x in range(4) for y in range(4) for z in range(4)]
-    
+
         possible_combinations = []
         for p1 in all_points:
             for p2 in all_points:
